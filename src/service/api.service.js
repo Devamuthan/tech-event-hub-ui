@@ -18,7 +18,7 @@ export const loginUser = async (email, password) => {
       return {
         token: token,
         user: {
-          id: user.email, // Using email as unique identifier since no userId is provided
+          id: user.userId,
           username: user.name,
           email: user.email,
           role: user.role.toLowerCase() // Convert role to lowercase
@@ -115,7 +115,11 @@ export const getUserEvents = async () => {
       throw new Error('User not logged in');
     }
     
-    const response = await axiosInstance.get(`/user/event/${currentUserId}`);
+    const response = await axiosInstance.get(`/user/events/${currentUserId}`);
+    // Handle the responseData structure
+    if (response.data.responseData) {
+      return response.data.responseData;
+    }
     return response.data;
   } catch (error) {
     console.error('Error fetching user events:', error);
@@ -125,7 +129,18 @@ export const getUserEvents = async () => {
 
 export const registerForEvent = async (eventId) => {
   try {
-    const response = await axiosInstance.post('/registration', { eventId });
+    // Get the current logged in user from localStorage
+    const userData = JSON.parse(localStorage.getItem(config.userKey)) || {};
+    const userId = userData.id;
+    
+    if (!userId) {
+      throw new Error('User not logged in');
+    }
+
+    const response = await axiosInstance.post('/registration', { 
+      eventId, 
+      userId
+    });
     return response.data;
   } catch (error) {
     console.error('Error registering for event:', error);

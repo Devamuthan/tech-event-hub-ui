@@ -35,20 +35,6 @@ function App() {
             {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            
-            {/* Public Routes - Temp until backend integration*/}
-            {/* <Route 
-              path="/" 
-              element={<Home />} 
-            />
-            <Route 
-              path="/home" 
-              element={<Home />} 
-            />
-            <Route 
-              path="/event/:id" 
-              element={<EventDetail />} 
-            /> */}
 
             {/* Protected Routes */}
             <Route 
@@ -68,7 +54,7 @@ function App() {
               element={<ProtectedRoute element={<CreateEvent />} allowedRoles={['admin']} />} 
             />
             <Route 
-              path="/my-registrations" 
+              path="/registrations" 
               element={<ProtectedRoute element={<MyRegistrations />} />} 
             />
             

@@ -70,6 +70,7 @@ const CreateEvent = () => {
   // Fetch event details if in edit mode
   useEffect(() => {
     if (isEditMode) {
+      console.log('eventId ', eventId)
       fetchEventDetails();
     }
   }, [eventId]);

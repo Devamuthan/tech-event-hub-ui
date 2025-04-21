@@ -62,7 +62,7 @@ const EventDetail = () => {
       
       // Check if user is registered for this event
       if (data.registrations && userData) {
-        const isRegistered = data.registrations.some(reg => reg.userId === userData.id);
+        const isRegistered = data.registrations.some(reg => reg.userId == userData.id);
         setRegistrationStatus(isRegistered ? 'registered' : 'not-registered');
       }
     } catch (error) {
@@ -81,11 +81,22 @@ const EventDetail = () => {
     
     setRegistrationLoading(true);
     try {
-      await registerForEvent(id);
+      console.log('Registering for event:', {
+        eventId: id,
+        userId: userData.id
+      });
+      
+      const response = await registerForEvent(id);
+      
+      console.log('Registration response:', response);
+      
       setRegistrationStatus('registered');
     } catch (error) {
       console.error('Failed to register for event:', error);
-      setError('Failed to register for this event. Please try again.');
+      setError(
+        error.response?.data?.responseMessage || 
+        'Failed to register for this event. Please try again.'
+      );
     } finally {
       setRegistrationLoading(false);
     }
@@ -125,7 +136,7 @@ const EventDetail = () => {
   
   const handleMyRegistrations = () => {
     handleMenuClose();
-    navigate('/my-registrations');
+    navigate('/registrations');
   };
 
   const formatDate = (dateString) => {

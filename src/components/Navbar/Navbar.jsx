@@ -1,65 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Container, 
-  Typography, 
-  Grid, 
-  Button, 
-  Box, 
   AppBar, 
   Toolbar, 
+  Typography, 
+  Box, 
   IconButton, 
   Menu, 
   MenuItem, 
-  CircularProgress,
+  Button, 
   Chip
 } from '@mui/material';
 import { 
+  Add as AddIcon, 
   AccountCircle, 
   Logout as LogoutIcon,
-  ArrowBack as ArrowBackIcon,
+  Login as LoginIcon,
   EventAvailable as EventAvailableIcon
 } from '@mui/icons-material';
-import EventCard from '../../components/EventCard/EventCard';
-import { getUserEvents } from '../../service/api.service';
 import config from '../../config/config';
-import '../Home/Home.css';
 
-const MyRegistrations = () => {
+const Navbar = ({ children }) => {
   const navigate = useNavigate();
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   
   const userData = JSON.parse(localStorage.getItem(config.userKey)) || null;
   const isLoggedIn = !!userData;
-
-  useEffect(() => {
-    // Redirect to login if not logged in
-    if (!isLoggedIn) {
-      navigate('/login');
-      return;
-    }
-    
-    fetchUserEvents();
-  }, [navigate, isLoggedIn]);
-
-  const fetchUserEvents = async () => {
-    setLoading(true);
-    try {
-      const response = await getUserEvents();
-      // Handle the new API response structure
-      const eventData = response.responseData || response;
-      setEvents(eventData);
-      setError(null);
-    } catch (error) {
-      console.error('Failed to fetch user events:', error);
-      setError('Failed to load your registered events. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -76,32 +42,40 @@ const MyRegistrations = () => {
     navigate('/login');
   };
 
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  const handleCreateEvent = () => {
+    navigate('/create-event');
+  };
+
   const handleMyRegistrations = () => {
     handleMenuClose();
     navigate('/registrations');
   };
 
-  const handleBackToHome = () => {
-    navigate('/home');
-  };
-
   return (
-    <div className="home-page">
+    <div>
       <AppBar position="static" color="primary">
         <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={handleBackToHome}
-            sx={{ mr: 2 }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            My Registered Events
+            Tech Event Hub
           </Typography>
           
-          {isLoggedIn && (
+          {isLoggedIn && userData.role === 'admin' && (
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<AddIcon />}
+              onClick={handleCreateEvent}
+              sx={{ mr: 2 }}
+            >
+              Create Event
+            </Button>
+          )}
+          
+          {isLoggedIn ? (
             <>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" sx={{ mr: 1 }}>
@@ -155,7 +129,7 @@ const MyRegistrations = () => {
                     )}
                   </Typography>
                 </MenuItem>
-                <MenuItem onClick={handleMyRegistrations} selected>
+                <MenuItem onClick={handleMyRegistrations}>
                   <EventAvailableIcon fontSize="small" sx={{ mr: 1 }} />
                   My Registrations
                 </MenuItem>
@@ -165,50 +139,20 @@ const MyRegistrations = () => {
                 </MenuItem>
               </Menu>
             </>
+          ) : (
+            <Button
+              color="inherit"
+              startIcon={<LoginIcon />}
+              onClick={handleLogin}
+            >
+              Login
+            </Button>
           )}
         </Toolbar>
       </AppBar>
-
-      <Container maxWidth="lg" className="home-container">
-        <Box sx={{ my: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Your Registered Events
-          </Typography>
-
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : error ? (
-            <Typography color="error" align="center" sx={{ my: 4 }}>
-              {error}
-            </Typography>
-          ) : events.length > 0 ? (
-            <Grid container spacing={3}>
-              {events.map((event) => (
-                <Grid item xs={12} sm={6} md={4} key={event.id}>
-                  <EventCard {...event} refreshEvents={fetchUserEvents} />
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
-            <Box sx={{ textAlign: 'center', my: 4 }}>
-              <Typography variant="body1" sx={{ mb: 2 }}>
-                You haven't registered for any events yet.
-              </Typography>
-              <Button 
-                variant="contained" 
-                color="primary" 
-                onClick={handleBackToHome}
-              >
-                Browse Events
-              </Button>
-            </Box>
-          )}
-        </Box>
-      </Container>
+      {children}
     </div>
   );
 };
 
-export default MyRegistrations;
+export default Navbar;

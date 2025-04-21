@@ -84,7 +84,7 @@ const Home = () => {
   
   const handleMyRegistrations = () => {
     handleMenuClose();
-    navigate('/my-registrations');
+    navigate('/registrations');
   };
 
   const handleFilterChange = (event) => {
