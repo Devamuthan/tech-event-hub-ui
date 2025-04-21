@@ -1,0 +1,34 @@
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.register-card {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px !important;
+}
+
+.register-title {
+  margin-bottom: 8px !important;
+  font-weight: 600 !important;
+  color: #3f51b5;
+}
+
+.register-subtitle {
+  margin-bottom: 24px !important;
+  color: #666;
+}
+
+.login-link {
+  color: #3f51b5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
